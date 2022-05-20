@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='500.css') }}">
+
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>milkanalyzer</title>
+    {% endif %}
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="box">
+        <h1>500</h1>
+        <p>Sorry, it's me, not you.</p>
+        <p>&#58;&#40;</p>
+        <p><a href="{{ url_for('main.home') }}">Let me try again!</a></p>
+        </div>
+        </div>
+</body>

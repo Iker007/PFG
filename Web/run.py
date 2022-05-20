@@ -1,8 +1,8 @@
 from flask import request
 from flask_restx import Api, Resource, fields
-from getitnow import db, bcrypt
-from getitnow.models import User, Restaurant, Product, SelectedProduct, Order
-from getitnow import new_app, new_api
+from milkanalyzer import db, bcrypt
+from milkanalyzer.models import User, Restaurant, Product, SelectedProduct, Order, AIModel, Value
+from milkanalyzer import new_app, new_api
 
 
 
@@ -66,6 +66,28 @@ user_model=api.model(
         'orders':fields.Nested(order_model),
     }
 )
+aimodel_model=api.model(
+    'AIModel',
+    {
+        'id':fields.Integer(),
+        'name':fields.String(),
+        'type':fields.String(),
+        'description':fields.String(),
+        'aimodel_picture':fields.String(),
+    }
+)
+
+value_model=api.model(
+    'Value',
+    {
+        'id':fields.Integer(),
+        'name':fields.String(),
+        'proportion':fields.String(),
+        'description':fields.String(),
+        'aimodel_id':fields.Integer(),
+    }
+)
+
 
 @api.route('/users')
 class Users(Resource):

@@ -1,5 +1,5 @@
-# GetItNow
-Food delivery app by Iker Silva/ Servicio de pedidos de comida por Iker Silva.
+# Milk pathogen predictions
+Milk pathogen prediction service by Iker Silva/ Servicio de detección de patógenos en leche por Iker Silva.
 
 Project developed with flask (Python 3.7+ needed)/ Proyecto desarrollado con flask (necesario Python 3.7+)
 
@@ -34,15 +34,16 @@ http://localhost:5000/api
     -Logout
     -Modify user information
     -Reser user password through email
-    -Navigate through restaurant pages and see available products
-    -Add products to chart
-    -Confirm payment
-    -Check history of orders
+    -Navigate through model pages
+    -Select a model
+    -Upload data
+    -Obtain predictions
+    -Check history of results
 
 -As admin:
 
     -Logout
-    -Navigate through restaurant pages and see available products
-    -Add new restaurants/products
-    -Modify existing restaurants/products
+    -Navigate through model pages
+    -Add new models
+    -Modify existing models
 

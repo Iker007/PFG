@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>List of available prediction models</h1></br>
+{% for aimodel in aimodels %}
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ url_for('static', filename='aimodel_images/' + aimodel.aimodel_picture) }}">
+    <div class="media-body">
+        <div class="article-metadata">
+            <small class="text-muted">{{ aimodel.type }}</small>
+        </div>
+        <h2><a class="article-title" href="{{ url_for('aimodels.aimodel', id=aimodel.id) }}">{{ aimodel.name }}</a></h2>
+        <p class="article-content">{{ aimodel.description }}</p>
+    </div>
+</article>
+{% endfor %}
+{% endblock content %}
