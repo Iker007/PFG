@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Login page</h1>
+    <h1>Página de inicio de sesión</h1>
     <div class="content-section">
         <form method="post" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-botton mb-4">
-                    Login
+                    Iniciar sesión
                 </legend>
                 <div class="form-group">
                     {{ form.email.label(class="form-control-label") }}
@@ -49,7 +49,7 @@
     </div>
     <div class="border-top pt-3">
         <small class="text-muted">
-            Not registered? <a class="ml-2" href="{{ url_for('users.register') }}">Register</a>
+            ¿No tienes una cuenta? <a class="ml-2" href="{{ url_for('users.register') }}">Regístrate</a>
         </small>
     </div>
 {% endblock content %}

@@ -15,7 +15,7 @@ def new_aimodel():
     else:
         aimodel_form = AIModelForm()
         if aimodel_form.validate_on_submit():
-            aimodel = AIModel(name=aimodel_form.name.data, type=aimodel_form.type.data, description=aimodel_form.description.data)
+            aimodel = AIModel(name=aimodel_form.name.data, type=aimodel_form.type.data, description=aimodel_form.description.data, url=aimodel_form.url.data)
             db.session.add(aimodel)
             db.session.commit()
             flash('AIModel information succesfully added!', 'success')
@@ -39,6 +39,7 @@ def update_aimodel(id):
         aimodel.name = update_aimodel_form.name.data
         aimodel.type = update_aimodel_form.type.data
         aimodel.description = update_aimodel_form.description.data
+        aimodel.url = update_aimodel_form.url.data
         db.session.commit()
         flash('AIModel information succesfully updated!', 'success')
         return redirect(url_for('aimodels.aimodel', id=aimodel.id))
@@ -46,6 +47,7 @@ def update_aimodel(id):
         update_aimodel_form.name.data = aimodel.name
         update_aimodel_form.type.data = aimodel.type
         update_aimodel_form.description.data = aimodel.description
+        update_aimodel_form.url.data = aimodel.url
     return render_template('add_aimodel.html', title='Update aimodel', form=update_aimodel_form, legend='Update aimodel')
 
 @aimodels.route("/aimodel/<int:id>/delete", methods=['POST'])

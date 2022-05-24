@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1>List of available prediction models</h1></br>
+{% if current_user.is_authenticated %}
+<h1>Lista de modelos disponibles</h1></br>
 {% for aimodel in aimodels %}
 <article class="media content-section">
     <img class="rounded-circle article-img" src="{{ url_for('static', filename='aimodel_images/' + aimodel.aimodel_picture) }}">
@@ -13,4 +14,7 @@
     </div>
 </article>
 {% endfor %}
+{% else %}
+<h1>Inicie sesiónpara visulaizar los modelos</h1></br>
+{% endif %}
 {% endblock content %}

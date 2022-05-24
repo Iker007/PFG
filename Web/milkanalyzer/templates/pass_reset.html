@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-<h1>password reset page</h1>
+<h1>Página de cambio de contraseña</h1>
 <div class="content-section">
     <form method="post" action="">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-botton mb-4">
-                Reset password
+                Cambiar contraseña
             </legend>
             <div class="form-group">
                 {{ form.password.label(class="form-control-label") }}

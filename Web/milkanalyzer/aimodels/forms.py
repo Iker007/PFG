@@ -3,8 +3,9 @@ from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired
 
 class AIModelForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    type = StringField('Type', validators=[DataRequired()])
-    description = TextAreaField('Information', validators=[DataRequired()])
-    submit = SubmitField('Confirm')
+    name = StringField('Nombre', validators=[DataRequired()])
+    type = StringField('Tipo', validators=[DataRequired()])
+    description = TextAreaField('Información', validators=[DataRequired()])
+    url = StringField('Url', validators=[DataRequired()])
+    submit = SubmitField('Confirmar')
 

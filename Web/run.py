@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Api, Resource, fields
 from milkanalyzer import db, bcrypt
-from milkanalyzer.models import User, Restaurant, Product, SelectedProduct, Order, AIModel, Value
+from milkanalyzer.models import User, AIModel, Value, Order, AIModel, Value
 from milkanalyzer import new_app, new_api
 
 
@@ -10,36 +10,25 @@ app=new_app()
 
 api=new_api(app)
 
-restaurant_model=api.model(
-    'Restaurant',
+aimodel_model=api.model(
+    'AIModel',
     {
         'id':fields.Integer(),
         'name':fields.String(),
-        'location':fields.String(),
+        'type':fields.String(),
         'description':fields.String(),
-        'restaurant_picture':fields.String(),
+        'aimodel_picture':fields.String(),
     }
 )
 
-product_model=api.model(
-    'Product',
+value_model=api.model(
+    'Value',
     {
         'id':fields.Integer(),
         'name':fields.String(),
-        'price':fields.Float(),
+        'proportion':fields.String(),
         'description':fields.String(),
-        'restaurant_id':fields.Integer(),
-    }
-)
-
-selected_product_model=api.model(
-    'SelectedProduct',
-    {
-        'id':fields.Integer(),
-        'name':fields.String(),
-        'price':fields.Float(),
-        'description':fields.String(),
-        'restaurant_id':fields.Integer(),
+        'aimodel_id':fields.Integer(),
     }
 )
 
@@ -64,27 +53,6 @@ user_model=api.model(
         'address':fields.String(),
         'profile_picture':fields.String(),
         'orders':fields.Nested(order_model),
-    }
-)
-aimodel_model=api.model(
-    'AIModel',
-    {
-        'id':fields.Integer(),
-        'name':fields.String(),
-        'type':fields.String(),
-        'description':fields.String(),
-        'aimodel_picture':fields.String(),
-    }
-)
-
-value_model=api.model(
-    'Value',
-    {
-        'id':fields.Integer(),
-        'name':fields.String(),
-        'proportion':fields.String(),
-        'description':fields.String(),
-        'aimodel_id':fields.Integer(),
     }
 )
 
@@ -163,217 +131,145 @@ class UserResource(Resource):
         return user_to_delete,200
 
 
-@api.route('/restaurants')
-class Restaurants(Resource):
+@api.route('/aimodels')
+class AIModels(Resource):
 
-    @api.marshal_list_with(restaurant_model,code=200,envelope="restaurants")
+    @api.marshal_list_with(aimodel_model,code=200,envelope="aimodels")
     def get(self):
-        ''' Get all restaurants '''
-        restaurants=Restaurant.query.all()
-        return restaurants
+        ''' Get all aimodels '''
+        aimodels=AIModel.query.all()
+        return aimodels
 
-    @api.marshal_with(restaurant_model,code=201,envelope="restaurant")
-    @api.expect(restaurant_model)
+    @api.marshal_with(aimodel_model,code=201,envelope="aimodel")
+    @api.expect(aimodel_model)
     def post(self):
-        ''' Create a new restaurant '''
+        ''' Create a new aimodel '''
         data=request.get_json()
 
         name=data.get('name')
-        location=data.get('location')
+        type=data.get('type')
         description=data.get('description')
 
-        new_restaurant=Restaurant(name=name, location=location, description=description)
+        new_aimodel=AIModel(name=name, type=type, description=description)
 
-        db.session.add(new_restaurant)
+        db.session.add(new_aimodel)
 
         db.session.commit()
 
-        return new_restaurant
+        return new_aimodel
 
-@api.route('/restaurants/<int:id>')
-class RestaurantResource(Resource):
+@api.route('/aimodels/<int:id>')
+class AIModelResource(Resource):
 
-    @api.marshal_with(restaurant_model,code=200,envelope="restaurant")
+    @api.marshal_with(aimodel_model,code=200,envelope="aimodel")
     def get(self,id):
 
-        ''' Get a restaurant by id '''
-        restaurant=Restaurant.query.get_or_404(id)
+        ''' Get a aimodel by id '''
+        aimodel=AIModel.query.get_or_404(id)
 
-        return restaurant,200
+        return aimodel,200
 
-    @api.marshal_with(restaurant_model,envelope="restaurant",code=200)
-    @api.expect(restaurant_model)
+    @api.marshal_with(aimodel_model,envelope="aimodel",code=200)
+    @api.expect(aimodel_model)
     def put(self,id):
 
-        ''' Update a restaurant'''
-        restaurant_to_update=Restaurant.query.get_or_404(id)
+        ''' Update a aimodel'''
+        aimodel_to_update=AIModel.query.get_or_404(id)
 
         data=request.get_json()
 
-        restaurant_to_update.name=data.get('name')
+        aimodel_to_update.name=data.get('name')
 
-        restaurant_to_update.location=data.get('location')
+        aimodel_to_update.type=data.get('type')
 
-        restaurant_to_update.description=data.get('description')
+        aimodel_to_update.description=data.get('description')
 
         db.session.commit()
 
-        return restaurant_to_update,200
+        return aimodel_to_update,200
 
-    @api.marshal_with(restaurant_model,envelope="restaurant_deleted",code=200)
+    @api.marshal_with(aimodel_model,envelope="aimodel_deleted",code=200)
     def delete(self,id):
-        '''Delete a restaurant'''
-        restaurant_to_delete=Restaurant.query.get_or_404(id)
+        '''Delete a aimodel'''
+        aimodel_to_delete=AIModel.query.get_or_404(id)
 
-        db.session.delete(restaurant_to_delete)
+        db.session.delete(aimodel_to_delete)
 
         db.session.commit()
 
-        return restaurant_to_delete,200
+        return aimodel_to_delete,200
 
 
-@api.route('/products')
-class Products(Resource):
+@api.route('/values')
+class Values(Resource):
 
-    @api.marshal_list_with(product_model,code=200,envelope="products")
+    @api.marshal_list_with(value_model,code=200,envelope="values")
     def get(self):
-        ''' Get all products '''
-        products=Product.query.all()
-        return products
+        ''' Get all values '''
+        values=Value.query.all()
+        return values
 
-    @api.marshal_with(product_model,code=201,envelope="product")
-    @api.expect(product_model)
+    @api.marshal_with(value_model,code=201,envelope="value")
+    @api.expect(value_model)
     def post(self):
-        ''' Create a new product '''
+        ''' Create a new value '''
         data=request.get_json()
 
         name=data.get('name')
-        price=data.get('price')
+        proportion=data.get('proportion')
         description=data.get('description')
-        restaurant_id=data.get('restaurant_id')
+        aimodel_id=data.get('aimodel_id')
 
-        new_product=Product(name=name, price=price, description=description, restaurant_id=restaurant_id)
+        new_value=Value(name=name, proportion=proportion, description=description, aimodel_id=aimodel_id)
 
-        db.session.add(new_product)
+        db.session.add(new_value)
 
         db.session.commit()
 
-        return new_product
+        return new_value
 
-@api.route('/products/<int:id>')
-class ProductResource(Resource):
+@api.route('/values/<int:id>')
+class ValueResource(Resource):
 
-    @api.marshal_with(product_model,code=200,envelope="product")
+    @api.marshal_with(value_model,code=200,envelope="value")
     def get(self,id):
 
-        ''' Get a product by id '''
-        product=Product.query.get_or_404(id)
+        ''' Get a value by id '''
+        value=Value.query.get_or_404(id)
 
-        return product,200
+        return value,200
 
-    @api.marshal_with(product_model,envelope="product",code=200)
-    @api.expect(product_model)
+    @api.marshal_with(value_model,envelope="value",code=200)
+    @api.expect(value_model)
     def put(self,id):
 
-        ''' Update a product'''
-        product_to_update=Product.query.get_or_404(id)
+        ''' Update a value'''
+        value_to_update=Value.query.get_or_404(id)
 
         data=request.get_json()
 
-        product_to_update.name=data.get('name')
+        value_to_update.name=data.get('name')
 
-        product_to_update.price=data.get('price')
+        value_to_update.proportion=data.get('proportion')
 
-        product_to_update.description=data.get('description')
+        value_to_update.description=data.get('description')
 
-        product_to_update.restaurant_id=data.get('restaurant_id')
+        value_to_update.aimodel_id=data.get('aimodel_id')
 
         db.session.commit()
 
-        return product_to_update,200
+        return value_to_update,200
 
-    @api.marshal_with(product_model,envelope="product_deleted",code=200)
+    @api.marshal_with(value_model,envelope="value_deleted",code=200)
     def delete(self,id):
-        '''Delete a product'''
-        product_to_delete=Product.query.get_or_404(id)
+        '''Delete a value'''
+        value_to_delete=Value.query.get_or_404(id)
 
-        db.session.delete(product_to_delete)
-
-        db.session.commit()
-
-        return product_to_delete,200
-
-
-@api.route('/selectedproducts')
-class SelectedProducts(Resource):
-
-    @api.marshal_list_with(selected_product_model,code=200,envelope="selected_products")
-    def get(self):
-        ''' Get all selected products '''
-        selected_products=SelectedProduct.query.all()
-        return selected_products
-
-    @api.marshal_with(selected_product_model,code=201,envelope="selected_product")
-    @api.expect(selected_product_model)
-    def post(self):
-        ''' Create a new selected product '''
-        data=request.get_json()
-
-        name=data.get('name')
-        price=data.get('price')
-        description=data.get('description')
-        restaurant_id=data.get('restaurant_id')
-
-        new_selected_product=SelectedProduct(name=name, price=price, description=description, restaurant_id=restaurant_id)
-
-        db.session.add(new_selected_product)
+        db.session.delete(value_to_delete)
 
         db.session.commit()
 
-        return new_selected_product
-
-@api.route('/selectedproducts/<int:id>')
-class SelectedProductResource(Resource):
-
-    @api.marshal_with(selected_product_model,code=200,envelope="selected_product")
-    def get(self,id):
-
-        ''' Get a selected product by id '''
-        selected_product=SelectedProduct.query.get_or_404(id)
-
-        return selected_product,200
-
-    @api.marshal_with(selected_product_model,envelope="selected_product",code=200)
-    @api.expect(selected_product_model)
-    def put(self,id):
-
-        ''' Update a selected product'''
-        selected_product_to_update=SelectedProduct.query.get_or_404(id)
-
-        data=request.get_json()
-
-        selected_product_to_update.name=data.get('name')
-
-        selected_product_to_update.price=data.get('price')
-
-        selected_product_to_update.description=data.get('description')
-
-        selected_product_to_update.restaurant_id=data.get('restaurant_id')
-
-        db.session.commit()
-
-        return selected_product_to_update,200
-
-    @api.marshal_with(selected_product_model,envelope="selected_product_deleted",code=200)
-    def delete(self,id):
-        '''Delete a selected product'''
-        selected_product_to_delete=SelectedProduct.query.get_or_404(id)
-
-        db.session.delete(selected_product_to_delete)
-
-        db.session.commit()
-
-        return selected_product_to_delete,200
+        return value_to_delete,200
 
 
 @api.route('/order')
