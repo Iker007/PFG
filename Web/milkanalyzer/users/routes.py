@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from milkanalyzer import db, bcrypt
-from milkanalyzer.models import User, SelectedProduct
+from milkanalyzer.models import User
 from milkanalyzer.users.utils import store_profile_image, pass_reset_email
 from milkanalyzer.users.forms import RegistrationForm, LoginForm, UpdateProfileForm, ResetPassRequestForm, ResetPassForm
 
@@ -43,7 +43,6 @@ def login():
 @login_required
 def profile():
     image_file = url_for('static', filename='profile_images/' + current_user.profile_picture)
-    selected_products = SelectedProduct.query.all()
     update_form = UpdateProfileForm()
     if update_form.validate_on_submit():
         if update_form.profile_picture.data:
@@ -59,7 +58,7 @@ def profile():
         update_form.username.data = current_user.username
         update_form.email.data = current_user.email
         update_form.address.data = current_user.address
-    return render_template('profile.html', title='Profile', profile_picture=image_file, form=update_form, selected_products=selected_products)
+    return render_template('profile.html', title='Profile', profile_picture=image_file, form=update_form)
 
 @users.route("/logout")
 def logout():

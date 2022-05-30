@@ -1,8 +1,7 @@
 
-from flask import render_template, redirect, url_for, Blueprint, current_app
+from flask import render_template, Blueprint, current_app
 from flask_login import login_required, current_user
 from milkanalyzer.models import Prediction
-from milkanalyzer import db
 import os, subprocess
 
 

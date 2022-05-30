@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Api, Resource, fields
 from milkanalyzer import db, bcrypt
-from milkanalyzer.models import User, AIModel, Value, Order, AIModel, Value, Prediction
+from milkanalyzer.models import User, AIModel, Value, Prediction
 from milkanalyzer import new_app, new_api
 
 
@@ -32,11 +32,11 @@ value_model=api.model(
     }
 )
 
-order_model=api.model(
-    'Order',
+prediction_model=api.model(
+    'Prediction',
     {
         'id':fields.Integer(),
-        'date_ordered':fields.DateTime(),
+        'date_predictioned':fields.DateTime(),
         'price':fields.Float(),
         'description':fields.String(),
         'user_id':fields.Integer(),
@@ -52,7 +52,7 @@ user_model=api.model(
         'password':fields.String(),
         'address':fields.String(),
         'profile_picture':fields.String(),
-        'orders':fields.Nested(order_model),
+        'predictions':fields.Nested(prediction_model),
     }
 )
 
@@ -272,76 +272,76 @@ class ValueResource(Resource):
         return value_to_delete,200
 
 
-@api.route('/order')
-class Orders(Resource):
+@api.route('/prediction')
+class Predictions(Resource):
 
-    @api.marshal_list_with(order_model,code=200,envelope="orders")
+    @api.marshal_list_with(prediction_model,code=200,envelope="predictions")
     def get(self):
-        ''' Get all orders '''
-        order=Order.query.all()
-        return order
+        ''' Get all predictions '''
+        prediction=Prediction.query.all()
+        return prediction
 
-    @api.marshal_with(order_model,code=201,envelope="order")
-    @api.expect(order_model)
+    @api.marshal_with(prediction_model,code=201,envelope="prediction")
+    @api.expect(prediction_model)
     def post(self):
-        ''' Create a new order '''
+        ''' Create a new prediction '''
         data=request.get_json()
 
-        date_ordered=data.get('date_ordered')
+        date_predictioned=data.get('date_predictioned')
         price=data.get('price')
         description=data.get('description')
         user_id=data.get('user_id')
 
-        new_order=Order(date_ordered=date_ordered, price=price, description=description, user_id=user_id)
+        new_prediction=Prediction(date_predictioned=date_predictioned, price=price, description=description, user_id=user_id)
 
-        db.session.add(new_order)
+        db.session.add(new_prediction)
 
         db.session.commit()
 
-        return new_order
+        return new_prediction
 
-@api.route('/order/<int:id>')
-class OrderResource(Resource):
+@api.route('/prediction/<int:id>')
+class PredictionResource(Resource):
 
-    @api.marshal_with(order_model,code=200,envelope="order")
+    @api.marshal_with(prediction_model,code=200,envelope="prediction")
     def get(self,id):
 
-        ''' Get a order by id '''
-        order=Order.query.get_or_404(id)
+        ''' Get a prediction by id '''
+        prediction=Prediction.query.get_or_404(id)
 
-        return order,200
+        return prediction,200
 
-    @api.marshal_with(order_model,envelope="order",code=200)
-    @api.expect(order_model)
+    @api.marshal_with(prediction_model,envelope="prediction",code=200)
+    @api.expect(prediction_model)
     def put(self,id):
 
-        ''' Update a order'''
-        order_to_update=Order.query.get_or_404(id)
+        ''' Update a prediction'''
+        prediction_to_update=Prediction.query.get_or_404(id)
 
         data=request.get_json()
 
-        order_to_update.date_ordered=data.get('date_ordered')
+        prediction_to_update.date_predictioned=data.get('date_predictioned')
 
-        order_to_update.price=data.get('price')
+        prediction_to_update.price=data.get('price')
 
-        order_to_update.description=data.get('description')
+        prediction_to_update.description=data.get('description')
 
-        order_to_update.user_id=data.get('user_id')
+        prediction_to_update.user_id=data.get('user_id')
 
         db.session.commit()
 
-        return order_to_update,200
+        return prediction_to_update,200
 
-    @api.marshal_with(order_model,envelope="order_deleted",code=200)
+    @api.marshal_with(prediction_model,envelope="prediction_deleted",code=200)
     def delete(self,id):
-        '''Delete a order'''
-        order_to_delete=Order.query.get_or_404(id)
+        '''Delete a prediction'''
+        prediction_to_delete=Prediction.query.get_or_404(id)
 
-        db.session.delete(order_to_delete)
+        db.session.delete(prediction_to_delete)
 
         db.session.commit()
 
-        return order_to_delete,200
+        return prediction_to_delete,200
 
 if __name__ == "__main__":
     app.run(debug=True)

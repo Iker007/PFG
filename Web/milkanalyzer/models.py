@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     address = db.Column(db.String(100), nullable=False)
     profile_picture = db.Column(db.String(20), nullable=False, default='defaultprofile.jpg')
-    orders = db.relationship('Order', backref='ordered_by', lazy=True)
+    predictions = db.relationship('Prediction', backref='prediction_of', lazy=True)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.profile_picture}')"    
@@ -32,46 +32,6 @@ class User(db.Model, UserMixin):
         except:
             return None
         return User.query.get(id)
-
-class Restaurant(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    location = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    restaurant_picture = db.Column(db.String(20), nullable=False, default='defaultrestaurant.jpg')
-
-    def __repr__(self):
-        return f"Restaurant('{self.name}', '{self.location}', '{self.restaurant_picture}')"
-
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    price = db.Column(db.Numeric(10,2), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
-
-    def __repr__(self):
-        return f"Restaurant('{self.name}', '{self.price}')"
-
-class SelectedProduct(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    price = db.Column(db.Numeric(10,2), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
-
-    def __repr__(self):
-        return f"Restaurant('{self.name}', '{self.price}')"
-
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    date_ordered = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    price = db.Column(db.Numeric(10,2), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    def __repr__(self):
-        return f"Order('{self.price}', '{self.description}')"
 
 class AIModel(db.Model):
     __tablename__ = 'aimodel'
@@ -102,4 +62,4 @@ class Prediction(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Order('{self.date_predicted}', '{self.user_id}')"
+        return f"Prediction('{self.date_predicted}', '{self.user_id}')"

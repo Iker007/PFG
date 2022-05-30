@@ -1,6 +1,5 @@
-from flask import render_template, request, Blueprint
-from milkanalyzer.models import AIModel, Restaurant, SelectedProduct
-
+from flask import render_template, Blueprint
+from milkanalyzer.models import AIModel
 
 main = Blueprint('main', __name__)
 
@@ -12,5 +11,4 @@ def home():
 
 @main.route("/about")
 def about():
-    selected_products = SelectedProduct.query.all()
-    return render_template('about.html', title='milkanalyzer', selected_products=selected_products)
+    return render_template('about.html', title='milkanalyzer')

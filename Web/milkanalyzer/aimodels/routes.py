@@ -6,13 +6,9 @@ from milkanalyzer.models import AIModel, Value, Prediction
 from milkanalyzer.aimodels.forms import AIModelForm, SelectFileForm
 from milkanalyzer import db
 from datetime import datetime
-
 import tensorflow as tf
-import numpy as np
 import pandas as pd
 import os
-from tensorflow import keras
-
 
 aimodels = Blueprint('aimodels', __name__)
 

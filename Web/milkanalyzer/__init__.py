@@ -28,23 +28,15 @@ def new_app(config_class = Config):
 
     from milkanalyzer.main.routes import main
     from milkanalyzer.users.routes import users
-    from milkanalyzer.restaurants.routes import restaurants
     from milkanalyzer.aimodels.routes import aimodels
-    from milkanalyzer.products.routes import products
     from milkanalyzer.values.routes import values
-    from milkanalyzer.orders.routes import orders
-    from milkanalyzer.payment.routes import payment
     from milkanalyzer.errors.error_handlers import errors
     from milkanalyzer.predictions.routes import predictions
 
     app.register_blueprint(main)
     app.register_blueprint(users)
-    app.register_blueprint(restaurants)
     app.register_blueprint(aimodels)
-    app.register_blueprint(products)
     app.register_blueprint(values)
-    app.register_blueprint(orders)
-    app.register_blueprint(payment)
     app.register_blueprint(errors)
     app.register_blueprint(predictions)
 
