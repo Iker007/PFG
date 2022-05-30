@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Api, Resource, fields
 from milkanalyzer import db, bcrypt
-from milkanalyzer.models import User, AIModel, Value, Order, AIModel, Value
+from milkanalyzer.models import User, AIModel, Value, Order, AIModel, Value, Prediction
 from milkanalyzer import new_app, new_api
 
 

@@ -1,9 +1,18 @@
 
-from flask import render_template, url_for, flash, redirect, request, abort, Blueprint
+from flask import render_template, url_for, flash, redirect, request, abort, Blueprint, current_app
 from flask_login import login_required, current_user
-from milkanalyzer.models import AIModel, Value
-from milkanalyzer.aimodels.forms import AIModelForm
+from milkanalyzer.aimodels.utils import store_csv
+from milkanalyzer.models import AIModel, Value, Prediction
+from milkanalyzer.aimodels.forms import AIModelForm, SelectFileForm
 from milkanalyzer import db
+from datetime import datetime
+
+import tensorflow as tf
+import numpy as np
+import pandas as pd
+import os
+from tensorflow import keras
+
 
 aimodels = Blueprint('aimodels', __name__)
 
@@ -60,3 +69,46 @@ def delete_aimodel(id):
     db.session.commit()
     flash('AIModel information succesfully removed!', 'success')
     return redirect(url_for('main.home'))
+
+@aimodels.route("/aimodel/<int:id>/use", methods=['GET', 'POST'])
+@login_required
+def use_aimodel(id):
+    aimodel = AIModel.query.get_or_404(id)
+    file_form = SelectFileForm()
+    if file_form.validate_on_submit():
+        csv_file = store_csv(file_form.csv_file.data)
+        dataframe = pd.read_csv(os.path.join(current_app.root_path, 'static/prediction_files', csv_file), delimiter=';')
+        dataframe.rename(columns={"Grasa (% P/P)": "grasa", "Proteina (% P/P)": "proteina", "Extracto (% P/P)": "extracto", "Lactosa (% P/P)": "lactosa", "Celulas (/ml*1000)": "celulas", "Bacterias (ufc/ml*1000)": "bacterias", "Inhb.": "inhb", "PC 1": "pc1", "Urea (mg/l)": "urea"}, inplace = True)
+        currentaimodel = tf.keras.models.load_model('.\.\.\Model\MyModel_v3\content\MyModel_v3')
+
+        predictionslist = []
+        for index, row in dataframe.iterrows():
+            sample = {
+                "grasa": row['grasa'],
+                "proteina": row['proteina'],
+                "extracto": row['extracto'],
+                "lactosa": row['lactosa'],
+                "celulas": row['celulas'],
+                "bacterias": row['bacterias'],
+                "inhb": row['inhb'],
+                "pc1": row['pc1'],
+                "urea": row['urea'],
+            }
+            
+            input_dict = {name: tf.convert_to_tensor([value]) for name, value in sample.items()}
+            predictions = currentaimodel.predict(input_dict)
+
+            predictionslist.append(float("{:.2f}".format(100 * predictions[0][0])))
+
+        dataframe['Probabilidad Patogeno'] = predictionslist
+        dataframe.rename(columns={"grasa" : "Grasa (% P/P)", "proteina" : "Proteina (% P/P)", "extracto" : "Extracto (% P/P)", "lactosa" : "Lactosa (% P/P)" , "celulas" : "Celulas (/ml*1000)", "bacterias" : "Bacterias (ufc/ml*1000)", "inhb" : "Inhb.", "pc1" : "PC 1", "urea" : "Urea (mg/l)"}, inplace = True)
+        now = datetime.now()
+        dataframe.to_csv(os.path.join(current_app.root_path, 'static/predicted_files', file_form.file_name.data) + '.csv', sep=';', encoding='utf-8')
+
+        prediction = Prediction(prediction_file=file_form.file_name.data + '.csv', user_id=current_user.id)
+        db.session.add(prediction)
+        db.session.commit()
+
+        flash('Predictions succesfully generated!', 'success')
+        return redirect(url_for('main.home'))
+    return render_template('use_aimodel.html', title='Use Model', form=file_form, aimodel=aimodel)

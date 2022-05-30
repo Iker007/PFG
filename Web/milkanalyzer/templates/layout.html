@@ -43,7 +43,7 @@
                         {% endif %}
                         <a class="nav-item nav-link" href="{{ url_for('users.profile') }}">Perfil</a>
                         {% if current_user.username != 'admin' %}
-                        <a class="nav-item nav-link" href="{{ url_for('orders.order_list') }}">Predicciones</a>
+                        <a class="nav-item nav-link" href="{{ url_for('predictions.prediction_list') }}">Predicciones</a>
                         {% endif %}
                         <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Cerrar sesión</a>
                         {% else %}

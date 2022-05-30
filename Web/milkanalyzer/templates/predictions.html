@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Predicciones de la cuenta</h1></br>
+{% for prediction in predictions %}
+<article class="media content-section">
+    <div class="media-body">
+        <div class="article-metadata">
+            <small class="text-muted">{{ prediction.date_predicted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+        </div>
+        <p>{{ prediction.prediction_file }}</p>
+        <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('predictions.download_prediction', id=prediction.id) }}">Acceder a resultados</a>
+    </div>
+</article>
+{% endfor %}
+{% endblock content %}

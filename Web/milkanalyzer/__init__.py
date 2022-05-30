@@ -35,6 +35,7 @@ def new_app(config_class = Config):
     from milkanalyzer.orders.routes import orders
     from milkanalyzer.payment.routes import payment
     from milkanalyzer.errors.error_handlers import errors
+    from milkanalyzer.predictions.routes import predictions
 
     app.register_blueprint(main)
     app.register_blueprint(users)
@@ -45,6 +46,7 @@ def new_app(config_class = Config):
     app.register_blueprint(orders)
     app.register_blueprint(payment)
     app.register_blueprint(errors)
+    app.register_blueprint(predictions)
 
     return app
 
