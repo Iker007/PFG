@@ -75,7 +75,7 @@ def use_aimodel(id):
         csv_file = store_csv(file_form.csv_file.data)
         dataframe = pd.read_csv(os.path.join(current_app.root_path, 'static/prediction_files', csv_file), delimiter=';')
         dataframe.rename(columns={"Grasa (% P/P)": "grasa", "Proteina (% P/P)": "proteina", "Extracto (% P/P)": "extracto", "Lactosa (% P/P)": "lactosa", "Celulas (/ml*1000)": "celulas", "Bacterias (ufc/ml*1000)": "bacterias", "Inhb.": "inhb", "PC 1": "pc1", "Urea (mg/l)": "urea"}, inplace = True)
-        currentaimodel = tf.keras.models.load_model('.\.\.\Model\MyModel_v3\content\MyModel_v3')
+        currentaimodel = tf.keras.models.load_model('.\.\.\Model\\' + aimodel.name + '\content\\' + aimodel.name)
 
         predictionslist = []
         for index, row in dataframe.iterrows():
@@ -105,6 +105,6 @@ def use_aimodel(id):
         db.session.add(prediction)
         db.session.commit()
 
-        flash('Predictions succesfully generated!', 'success')
+        flash('¡Predicciones generadas con éxito!', 'success')
         return redirect(url_for('main.home'))
     return render_template('use_aimodel.html', title='Use Model', form=file_form, aimodel=aimodel)

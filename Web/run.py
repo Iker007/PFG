@@ -36,9 +36,8 @@ prediction_model=api.model(
     'Prediction',
     {
         'id':fields.Integer(),
-        'date_predictioned':fields.DateTime(),
-        'price':fields.Float(),
-        'description':fields.String(),
+        'date_predicted':fields.DateTime(),
+        'prediction_file':fields.String(),
         'user_id':fields.Integer(),
     }
 )
@@ -287,12 +286,11 @@ class Predictions(Resource):
         ''' Create a new prediction '''
         data=request.get_json()
 
-        date_predictioned=data.get('date_predictioned')
-        price=data.get('price')
-        description=data.get('description')
+        date_predicted=data.get('date_predicted')
+        prediction_file=data.get('prediction_file')
         user_id=data.get('user_id')
 
-        new_prediction=Prediction(date_predictioned=date_predictioned, price=price, description=description, user_id=user_id)
+        new_prediction=Prediction(date_predicted=date_predicted, prediction_file=prediction_file, user_id=user_id)
 
         db.session.add(new_prediction)
 
@@ -320,11 +318,9 @@ class PredictionResource(Resource):
 
         data=request.get_json()
 
-        prediction_to_update.date_predictioned=data.get('date_predictioned')
+        prediction_to_update.date_predicted=data.get('date_predicted')
 
-        prediction_to_update.price=data.get('price')
-
-        prediction_to_update.description=data.get('description')
+        prediction_to_update.prediction_file=data.get('prediction_file')
 
         prediction_to_update.user_id=data.get('user_id')
 
