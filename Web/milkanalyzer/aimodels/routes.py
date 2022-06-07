@@ -1,4 +1,5 @@
 
+import imp
 from flask import render_template, url_for, flash, redirect, request, abort, Blueprint, current_app
 from flask_login import login_required, current_user
 from milkanalyzer.aimodels.utils import store_csv
@@ -9,6 +10,9 @@ from datetime import datetime
 import tensorflow as tf
 import pandas as pd
 import os
+import pickle
+import numpy as np
+import sklearn
 
 aimodels = Blueprint('aimodels', __name__)
 
@@ -74,30 +78,77 @@ def use_aimodel(id):
     if file_form.validate_on_submit():
         csv_file = store_csv(file_form.csv_file.data)
         dataframe = pd.read_csv(os.path.join(current_app.root_path, 'static/prediction_files', csv_file), delimiter=';')
-        dataframe.rename(columns={"Grasa (% P/P)": "grasa", "Proteina (% P/P)": "proteina", "Extracto (% P/P)": "extracto", "Lactosa (% P/P)": "lactosa", "Celulas (/ml*1000)": "celulas", "Bacterias (ufc/ml*1000)": "bacterias", "Inhb.": "inhb", "PC 1": "pc1", "Urea (mg/l)": "urea"}, inplace = True)
-        currentaimodel = tf.keras.models.load_model('.\.\.\Model\\' + aimodel.name + '\content\\' + aimodel.name)
+        dataframe.rename(columns={"Grasa (% P/P)": "grasa", "Proteina (% P/P)": "proteina", "Extracto (% P/P)": "extracto", "Lactosa (% P/P)": "lactosa", "Celulas (/ml*1000)": "celulas", "Urea (mg/l)": "urea"}, inplace = True)
+        if aimodel.id < 3:
+            currentaimodel = tf.keras.models.load_model('.\.\.\Model\\' + aimodel.name + '\content\\' + aimodel.name)
+            modeltype = 1
+        elif aimodel.id == 3:
+            currentaimodel = tf.keras.models.load_model('.\.\.\Model\\' + aimodel.name + '\content\\' + aimodel.name)
+            modeltype = 2
+        else:
+            currentaimodel = pickle.load(open('.\.\.\Model\\' + aimodel.name + '.sav', 'rb'))
+            modeltype = 0
 
-        predictionslist = []
-        for index, row in dataframe.iterrows():
-            sample = {
-                "grasa": row['grasa'],
-                "proteina": row['proteina'],
-                "extracto": row['extracto'],
-                "lactosa": row['lactosa'],
-                "celulas": row['celulas'],
-                "bacterias": row['bacterias'],
-                "inhb": row['inhb'],
-                "pc1": row['pc1'],
-                "urea": row['urea'],
-            }
+        if modeltype == 1:
             
-            input_dict = {name: tf.convert_to_tensor([value]) for name, value in sample.items()}
-            predictions = currentaimodel.predict(input_dict)
+            predictionslist = []
+            for index, row in dataframe.iterrows():
+                sample = {
+                    "grasa": row['grasa'],
+                    "proteina": row['proteina'],
+                    "extracto": row['extracto'],
+                    "lactosa": row['lactosa'],
+                    "celulas": row['celulas'],
+                    "urea": row['urea'],
+                }
+                
+                input_dict = {name: tf.convert_to_tensor([value]) for name, value in sample.items()}
+                predictions = currentaimodel.predict(input_dict)
 
-            predictionslist.append(float("{:.2f}".format(100 * predictions[0][0])))
+                if predictions < 0:
+                    predictions[0] = 0
 
-        dataframe['Probabilidad Patogeno'] = predictionslist
-        dataframe.rename(columns={"grasa" : "Grasa (% P/P)", "proteina" : "Proteina (% P/P)", "extracto" : "Extracto (% P/P)", "lactosa" : "Lactosa (% P/P)" , "celulas" : "Celulas (/ml*1000)", "bacterias" : "Bacterias (ufc/ml*1000)", "inhb" : "Inhb.", "pc1" : "PC 1", "urea" : "Urea (mg/l)"}, inplace = True)
+                predictionslist.append(float("{:.2f}".format(100 * predictions[0][0])))
+
+        elif modeltype == 2:
+
+            predictionslist = []
+            for index, row in dataframe.iterrows():
+                sample = np.array([[
+                    row['grasa'],
+                    row['proteina'],
+                    row['extracto'],
+                    row['lactosa'],
+                    row['celulas'],
+                    row['urea'],
+                ]])
+                            
+                predictions = currentaimodel.predict(sample)
+
+                if predictions < 0:
+                    predictions[0] = 0
+
+                predictionslist.append(float("{:.2f}".format(100 * predictions[0][0])))
+
+        else:
+
+            predictionslist = []
+            for index, row in dataframe.iterrows():
+
+                New_grasa = row['grasa']
+                New_proteina = row['proteina']
+                New_extracto = row['extracto']
+                New_lactosa = row['lactosa']
+                New_celulas = row['celulas']
+                New_urea = row['urea']
+                predictions = currentaimodel.predict([[New_grasa, New_proteina, New_extracto, New_lactosa, New_celulas, New_urea]])
+
+                predictionslist.append(predictions)
+        if modeltype == 0:
+            dataframe['Presencia Patogeno'] = predictionslist
+        else:
+            dataframe['Probabilidad Patogeno'] = predictionslist
+        dataframe.rename(columns={"grasa" : "Grasa (% P/P)", "proteina" : "Proteina (% P/P)", "extracto" : "Extracto (% P/P)", "lactosa" : "Lactosa (% P/P)" , "celulas" : "Celulas (/ml*1000)", "urea" : "Urea (mg/l)"}, inplace = True)
         now = datetime.now()
         dataframe.to_csv(os.path.join(current_app.root_path, 'static/predicted_files', file_form.file_name.data) + '.csv', sep=';', encoding='utf-8')
 

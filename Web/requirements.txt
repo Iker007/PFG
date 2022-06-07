@@ -36,3 +36,4 @@ Werkzeug==2.0.2
 WTForms==3.0.1
 pandas==1.4.0
 tensorflow==2.9.0
+sklearn==0.0
