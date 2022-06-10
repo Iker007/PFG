@@ -4,8 +4,6 @@ from milkanalyzer import db, bcrypt
 from milkanalyzer.models import User, AIModel, Value, Prediction
 from milkanalyzer import new_app, new_api
 
-
-
 app=new_app()
 
 api=new_api(app)
@@ -39,6 +37,7 @@ prediction_model=api.model(
         'date_predicted':fields.DateTime(),
         'prediction_file':fields.String(),
         'user_id':fields.Integer(),
+        'aimodel_id':fields.Integer(),
     }
 )
 
@@ -289,8 +288,9 @@ class Predictions(Resource):
         date_predicted=data.get('date_predicted')
         prediction_file=data.get('prediction_file')
         user_id=data.get('user_id')
+        aimodel_id=data.get('aimodel_id')
 
-        new_prediction=Prediction(date_predicted=date_predicted, prediction_file=prediction_file, user_id=user_id)
+        new_prediction=Prediction(date_predicted=date_predicted, prediction_file=prediction_file, user_id=user_id, aimodel_id=aimodel_id)
 
         db.session.add(new_prediction)
 
@@ -323,6 +323,8 @@ class PredictionResource(Resource):
         prediction_to_update.prediction_file=data.get('prediction_file')
 
         prediction_to_update.user_id=data.get('user_id')
+
+        prediction_to_update.aimodel_id=data.get('aimodel_id')
 
         db.session.commit()
 

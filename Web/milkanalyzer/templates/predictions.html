@@ -9,6 +9,7 @@
         </div>
         <p>{{ prediction.prediction_file }}</p>
         <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('predictions.download_prediction', id=prediction.id) }}">Acceder a resultados</a>
+        <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('predictions.report', id=prediction.id) }}">Acceder al reporte</a>
     </div>
 </article>
 {% endfor %}

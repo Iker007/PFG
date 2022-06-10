@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+</head>
+<h1>REPORTE PARA LA PREDICCIÓN CON ID: {{ prediction.id }}</h1>
+</br>
+<div class="content-section">
+    <div class="media">
+        <div class="media-body">
+            <h2 class="account-heading">DATOS GENERALES</h2></br>
+            <p class="text-secondary">USUARIO RESPONSABLE: {{ user.username }}</p>
+            <p class="text-secondary">FECHA DE CREACIÓN: {{ prediction.date_predicted }}</p>
+            <p class="text-secondary">ARCHIVO CON RESULTADOS: {{ prediction.prediction_file }}</p>
+        </div>
+    </div>
+    </br>
+    <div class="media">
+        <div class="media-body">
+            <h2 class="account-heading">INFORMACIÓN SOBRE EL MODELO UTILIZADO</h2></br>
+            <p class="text-secondary">NOMBRE: {{ usedaimodel.name }}</p>
+            <p class="text-secondary">TIPO: {{ usedaimodel.type }}</p>
+            <p class="text-secondary">SOBRE EL MODELO: {{ usedaimodel.description }}</p>
+            <p class="text-secondary">VALORES MEDIDOS: </p>
+            {% for value in values %}
+            {{ value.name }} ({{ value.proportion }})</br>
+            {% endfor %}
+            <p class="text-secondary">ACCESO AL CÓDIGO: <a href="{{ usedaimodel.url }}"> {{ usedaimodel.url }} </a></p>
+        </div>
+    </div>
+    </br>
+    </br>
+    <div class="media">
+        <div class="media-body">
+            <p class="text-secondary">Este reporte ha sido generado automáticamente por la herramienta Milk Analyzer, y
+                pasa a ser propiedad del usuario responsable. Es posible generar copias de este documento si se vuelve a
+                seleccionar la acción para 'acceder al reporte' desde el apartado de predicciones.</p>
+        </div>
+    </div>
+</div>
+
+</html>

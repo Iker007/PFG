@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Guia de uso</h1>
+</br>
+<div class="content-section">
+    <div class="media">
+        <div class="media-body">
+            <h2 class="account-heading">Primeros pasos</h2></br>
+            <p class="text-secondary">Antes de nada, si no conoce el objetivo de esta página, se recomienda que acceda a
+                la sección <a href="{{ url_for('main.about') }}">sobre el proyecto</a> en la que se especifica el motivo
+                de la herramienta.
+            </p>
+            <p class="text-secondary">Para poder hacer uso de esta herramienta, es necesario poseer una cuenta para la
+                misma. Esto puede hacerse desde el apartado <a href="{{ url_for('users.register') }}">registrarse</a>.
+                En caso de contar ya con una cuenta, o tras haberse registrado, es necesario <a
+                    href="{{ url_for('users.login') }}">iniciar sesión</a> para poder visualizar todas las opciones de
+                las que dispone la herramienta.
+            </p>
+            <p class="text-secondary"> Una vez haya iniciado sesión, podrá acceder a <a
+                    href="{{ url_for('users.profile') }}">su perfil</a> donde podrá revisar y modificar su información
+                personal. Además de esto, obtendrá acceso a la lista de modelos disponibles en la herramienta si accede
+                a la <a href="{{ url_for('main.home') }}">página principal</a>.
+            </p>
+            </br>
+            <div>
+                <img style="width:450px;height:350px;" class="center"
+                    src="{{ url_for('static', filename='milkanalyzer_images/Profile.png') }}">
+            </div>
+        </div>
+        </br>
+    </div>
+    </br>
+    <div class="media">
+        <div class="media-body">
+            <h2 class="account-heading">Uso de modelos</h2></br>
+            <p class="text-secondary">Una vez situados en la <a href="{{ url_for('main.home') }}">página principal</a>,
+                se mostrará la lista de modelos disponibles para realizar predicciones. Cada modelo tiene
+                características diferentes, las cuales se resumirán en su descripción. Para acceder a un modelo y
+                obtener más información o seleccionarlo para realizar predicciones, basta con hacer click en su nombre.
+            </p>
+            </br>
+            <img style="width:550px;height:200px;" class="center"
+                src="{{ url_for('static', filename='milkanalyzer_images/Model.png') }}">
+            </br>
+            <p class="text-secondary">Dentro de la página de un modelo, se nos mostrarán varias secciones. Antes de
+                nada, en la parte superior de la página, se nos mostrará la información básica del modelo seleccionado
+                junto a 2 botones.
+                </br>
+            <div>
+                <img style="width:550px;height:200px;" class="center"
+                    src="{{ url_for('static', filename='milkanalyzer_images/Model2.png') }}">
+            </div>
+            </br>
+            El primer botón nos llevará a un cuaderno de <a href="https://colab.research.google.com/">google
+                colab</a> en el que se mostrará el
+            código de la creación y entrenamiento de dicho modelo, con algunas explicaciones para una mejor
+            comprensión. El segundo botón nos permitirá hacer uso del modelo para realizar predicciones, proceso el
+            cual se explica más adelante. Finalmente, cada modelo cuenta con una sección llamada "lista de valores
+            requeridos para el modelo", la cual indica los datos que se han utilizado para el entrenamiento del
+            modelo. También es posible obtener más información sobre estos datos accediendo a sus páginas
+            individuales desde este apartado.
+            </p>
+            </br>
+            <div>
+                <img style="width:550px;height:250px;" class="center"
+                    src="{{ url_for('static', filename='milkanalyzer_images/Value.png') }}">
+            </div>
+            </br>
+            <p class="text-secondary">Una vez se selecciona el modelo y se pulsa el botón de usar modelo, pasamos a un
+                formulario en el que se pide especificar el nombre del fichero resultante con las predicciones, además
+                de
+                el archivo csv con las muestras sobre las que predecir. Sólamente se aceptan archivos csv y además estos
+                deben contener muestras con por lo menos los datos especificos para cada modelo (los que se indican en
+                la sección
+                "lista de valores requeridos para el modelo"). Es posible proporcionar más datos de los especificados,
+                pero estos serán ignorados a la hora de realizar predicciones.</p>
+            </br>
+            <div>
+                <img style="width:550px;height:250px;" class="center"
+                    src="{{ url_for('static', filename='milkanalyzer_images/UseModel.png') }}">
+            </div>
+            </br>
+            <p class="text-secondary">A continuación se proporciona una plantilla para asegurarse de que no se produzca
+                ningún error relacionado al formato del documento.</p>
+            <a class="btn btn-secondary btn-sm m-1" href="{{ url_for('main.plantilla') }}">Plantilla</a>
+            </br>
+            </br>
+            <p class="text-secondary">Una vez subido el archivo con las muestras y seleccionado confirmar, la
+                herramienta comenzará a realizar predicciones, (el tiempo varía dependiendo del modelo seleccionado) y
+                una vez finalizado, se guardarán los resultados en la sección <a
+                    href="{{ url_for('predictions.prediction_list') }}">predicciones</a>, en dónde se podrán consultar
+                la
+                fecha y hora de dichas predicciones, además de acceder al archivo csv con los resultados y a un reporte
+                en formato pdf con información relevante.</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -6,7 +6,6 @@ from milkanalyzer.aimodels.utils import store_csv
 from milkanalyzer.models import AIModel, Value, Prediction
 from milkanalyzer.aimodels.forms import AIModelForm, SelectFileForm
 from milkanalyzer import db
-from datetime import datetime
 import tensorflow as tf
 import pandas as pd
 import os
@@ -32,6 +31,7 @@ def new_aimodel():
         return render_template('add_aimodel.html', title='New aimodel', form=aimodel_form, legend='Add aimodel')
 
 @aimodels.route("/aimodel/<int:id>")
+@login_required
 def aimodel(id):
     aimodel = AIModel.query.get_or_404(id)
     values = Value.query.filter_by(aimodel_id = aimodel.id).all()
@@ -149,10 +149,9 @@ def use_aimodel(id):
         else:
             dataframe['Probabilidad Patogeno'] = predictionslist
         dataframe.rename(columns={"grasa" : "Grasa (% P/P)", "proteina" : "Proteina (% P/P)", "extracto" : "Extracto (% P/P)", "lactosa" : "Lactosa (% P/P)" , "celulas" : "Celulas (/ml*1000)", "urea" : "Urea (mg/l)"}, inplace = True)
-        now = datetime.now()
         dataframe.to_csv(os.path.join(current_app.root_path, 'static/predicted_files', file_form.file_name.data) + '.csv', sep=';', encoding='utf-8')
 
-        prediction = Prediction(prediction_file=file_form.file_name.data + '.csv', user_id=current_user.id)
+        prediction = Prediction(prediction_file=file_form.file_name.data + '.csv', user_id=current_user.id, aimodel_id=aimodel.id)
         db.session.add(prediction)
         db.session.commit()
 

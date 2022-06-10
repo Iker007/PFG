@@ -60,6 +60,7 @@ class Prediction(db.Model):
     date_predicted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     prediction_file = db.Column(db.String(50), nullable=False, default='predictions.csv')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    aimodel_id = db.Column(db.Integer, db.ForeignKey('aimodel.id'), nullable=False)
 
     def __repr__(self):
         return f"Prediction('{self.date_predicted}', '{self.user_id}')"

@@ -5,7 +5,7 @@
     src="{{ url_for('static', filename='aimodel_images/' + aimodel.aimodel_picture) }}">
   <div class="media-body">
     <div class="article-metadata">
-      <small class="text-muted">{{ aimodel.location }}</small>
+      <small class="text-muted">{{ aimodel.type }}</small>
       {% if current_user.username == 'admin' %}
       <div>
         <a class="btn btn-secondary btn-sm m-1"
@@ -30,7 +30,6 @@
     <h2><a class="article-title" href="{{ url_for('values.value', aimodel_id=aimodel.id, id=value.id) }}">{{
       value.name }}</a></h2>
     <p class="article-content">Proporción: {{ value.proportion }}</p>
-    <p class="article-content">{{ value.description }}</p>
   </div>
 </article>
 {% endfor %}
