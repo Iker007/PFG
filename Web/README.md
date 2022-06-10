@@ -25,9 +25,8 @@ http://localhost:5000/api
 
 -Not logged in:
 
-    -Register new users
+    -Register new user
     -Login
-    -Navigate through restaurant pages and see available products
 
 -As a standard user:
 
@@ -36,9 +35,11 @@ http://localhost:5000/api
     -Reser user password through email
     -Navigate through model pages
     -Select a model
-    -Upload data
-    -Obtain predictions
+    -See model values information
+    -Upload samples to make predictions (csv)
+    -Obtain predictions (new csv)
     -Check history of results
+    -Generate a report for a prediction
 
 -As admin:
 
@@ -46,4 +47,6 @@ http://localhost:5000/api
     -Navigate through model pages
     -Add new models
     -Modify existing models
+    -Add model values
+    -Modify existing model values
 

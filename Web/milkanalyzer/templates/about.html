@@ -25,9 +25,7 @@
             <p class="text-secondary">Esta página web ofrece a las empresas interesadas el poder realizar predicciones sobre
                 la presencia de patógenos en muestras de leche. Para poder hacer uso de la herramienta, los individuos interesados
                 deberán crear una cuenta y seleccionar el modelo que deseen probar. Una vez seleccionado el modelo, se deberá subir
-                un fichero que contenga las muestras de leche a analizar siguiendo el formato especificado en la página del modelo en cuestión.</p>
-            <p class="text-secondary">Cada modelo tiene requisitos diferentes, y dependiendo del número de requisitos cumplidos, la 
-                precisión del modelo puede variar. Cuantos más requisitos se cumplan, mayor será la precisión de la predicción.</p>
+                un fichero que contenga las muestras de leche a analizar siguiendo el formato especificado en la <a href="{{ url_for('main.home') }}">guía de uso</a>.</p>
                 <div>
                     <img style="width:400px;height:300px;" class="center" src="{{ url_for('static', filename='milkanalyzer_images/about2.jpg') }}">
                 </div>
