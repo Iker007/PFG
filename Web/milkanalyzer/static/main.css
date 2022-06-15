@@ -85,3 +85,12 @@ body {
     margin-right: auto;
     width: 50%;
   }
+
+  div#loading {
+    margin: auto;
+    width: 1000px;
+    height: 1000px;
+    display: none;
+    background: url(/static/loading.gif) no-repeat;
+    cursor: wait;
+    }

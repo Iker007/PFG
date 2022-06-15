@@ -33,8 +33,14 @@ def report(id):
     usedaimodel = AIModel.query.get_or_404(prediction.aimodel_id)
     values = Value.query.filter_by(aimodel_id = usedaimodel.id).all()
     url = os.path.join(current_app.root_path, 'static\\reports\\Report-' + str(prediction.id) + '.pdf')
+    total_samples = prediction.total_samples
+    positive_samples = prediction.positive_samples
+
+    patogen_percentage = positive_samples * 100 / total_samples
+    patogen_percentage = str(round(patogen_percentage, 2))
+
  
-    html = render_template("report.html", prediction=prediction, user=user, usedaimodel=usedaimodel, values=values)
+    html = render_template("report.html", prediction=prediction, user=user, usedaimodel=usedaimodel, values=values, total_samples=total_samples, positive_samples=positive_samples, patogen_percentage=patogen_percentage)
     wkhtmltopdf_url = os.path.join(current_app.root_path, 'static\\wkhtmltox\\bin\\wkhtmltopdf.exe')
     print(wkhtmltopdf_url)
 

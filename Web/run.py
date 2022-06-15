@@ -36,6 +36,8 @@ prediction_model=api.model(
         'id':fields.Integer(),
         'date_predicted':fields.DateTime(),
         'prediction_file':fields.String(),
+        'total_samples':fields.Integer(),
+        'positive_samples':fields.Integer(),
         'user_id':fields.Integer(),
         'aimodel_id':fields.Integer(),
     }
@@ -287,10 +289,12 @@ class Predictions(Resource):
 
         date_predicted=data.get('date_predicted')
         prediction_file=data.get('prediction_file')
+        total_samples=data.get('total_samples')
+        positive_samples=data.get('positive_samples')
         user_id=data.get('user_id')
         aimodel_id=data.get('aimodel_id')
 
-        new_prediction=Prediction(date_predicted=date_predicted, prediction_file=prediction_file, user_id=user_id, aimodel_id=aimodel_id)
+        new_prediction=Prediction(date_predicted=date_predicted, prediction_file=prediction_file, total_samples=total_samples, positive_samples=positive_samples, user_id=user_id, aimodel_id=aimodel_id)
 
         db.session.add(new_prediction)
 
@@ -321,6 +325,10 @@ class PredictionResource(Resource):
         prediction_to_update.date_predicted=data.get('date_predicted')
 
         prediction_to_update.prediction_file=data.get('prediction_file')
+
+        prediction_to_update.total_samples=data.get('total_samples')
+
+        prediction_to_update.positive_samples=data.get('positive_samples')
 
         prediction_to_update.user_id=data.get('user_id')
 

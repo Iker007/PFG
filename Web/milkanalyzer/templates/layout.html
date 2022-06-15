@@ -44,7 +44,8 @@
                         {% endif %}
                         <a class="nav-item nav-link" href="{{ url_for('users.profile') }}">Perfil</a>
                         {% if current_user.username != 'admin' %}
-                        <a class="nav-item nav-link" href="{{ url_for('predictions.prediction_list') }}">Predicciones</a>
+                        <a class="nav-item nav-link"
+                            href="{{ url_for('predictions.prediction_list') }}">Predicciones</a>
                         {% endif %}
                         <a class="nav-item nav-link" href="{{ url_for('users.logout') }}">Cerrar sesión</a>
                         {% else %}
@@ -85,6 +86,19 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script type="text/javascript">// <![CDATA[
+        function loading() {
+
+            form = document.getElementById('model_validation')
+
+            if (form.checkValidity() == false) {
+            }
+            else {
+                $("#loading").show();
+                $("#content").hide();
+            }
+        }
+    // ]]></script>
 </body>
 
 </html>

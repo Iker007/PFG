@@ -75,18 +75,21 @@ def delete_aimodel(id):
 def use_aimodel(id):
     aimodel = AIModel.query.get_or_404(id)
     file_form = SelectFileForm()
+    global_path= os.path.join(current_app.root_path)
+    total_samples = 0
+    positive_samples = 0
     if file_form.validate_on_submit():
         csv_file = store_csv(file_form.csv_file.data)
         dataframe = pd.read_csv(os.path.join(current_app.root_path, 'static/prediction_files', csv_file), delimiter=';')
         dataframe.rename(columns={"Grasa (% P/P)": "grasa", "Proteina (% P/P)": "proteina", "Extracto (% P/P)": "extracto", "Lactosa (% P/P)": "lactosa", "Celulas (/ml*1000)": "celulas", "Urea (mg/l)": "urea"}, inplace = True)
         if aimodel.id < 3:
-            currentaimodel = tf.keras.models.load_model('.\.\.\Model\\' + aimodel.name + '\content\\' + aimodel.name)
+            currentaimodel = tf.keras.models.load_model(global_path + '\\Model\\' + aimodel.name + '\\content\\' + aimodel.name)
             modeltype = 1
         elif aimodel.id == 3:
-            currentaimodel = tf.keras.models.load_model('.\.\.\Model\\' + aimodel.name + '\content\\' + aimodel.name)
+            currentaimodel = tf.keras.models.load_model(global_path + '\\Model\\' + aimodel.name + '\\content\\' + aimodel.name)
             modeltype = 2
         else:
-            currentaimodel = pickle.load(open('.\.\.\Model\\' + aimodel.name + '.sav', 'rb'))
+            currentaimodel = pickle.load(open(global_path + '\\Model\\' + aimodel.name + '.sav', 'rb'))
             modeltype = 0
 
         if modeltype == 1:
@@ -101,9 +104,13 @@ def use_aimodel(id):
                     "celulas": row['celulas'],
                     "urea": row['urea'],
                 }
+                total_samples = total_samples + 1
                 
                 input_dict = {name: tf.convert_to_tensor([value]) for name, value in sample.items()}
                 predictions = currentaimodel.predict(input_dict)
+
+                if predictions[0][0] > 0.5:
+                    positive_samples = positive_samples + 1
 
                 if predictions < 0:
                     predictions[0] = 0
@@ -122,11 +129,15 @@ def use_aimodel(id):
                     row['celulas'],
                     row['urea'],
                 ]])
+                total_samples = total_samples + 1
                             
                 predictions = currentaimodel.predict(sample)
 
                 if predictions < 0:
                     predictions[0] = 0
+                else:
+                    positive_samples = positive_samples + 1
+                
 
                 predictionslist.append(float("{:.2f}".format(100 * predictions[0][0])))
 
@@ -142,6 +153,13 @@ def use_aimodel(id):
                 New_celulas = row['celulas']
                 New_urea = row['urea']
                 predictions = currentaimodel.predict([[New_grasa, New_proteina, New_extracto, New_lactosa, New_celulas, New_urea]])
+                total_samples = total_samples + 1
+
+                if predictions > 0:
+                    predictions[0] = 1
+                    positive_samples = positive_samples + 1
+                else:
+                    predictions[0] = 0
 
                 predictionslist.append(predictions)
         if modeltype == 0:
@@ -151,10 +169,10 @@ def use_aimodel(id):
         dataframe.rename(columns={"grasa" : "Grasa (% P/P)", "proteina" : "Proteina (% P/P)", "extracto" : "Extracto (% P/P)", "lactosa" : "Lactosa (% P/P)" , "celulas" : "Celulas (/ml*1000)", "urea" : "Urea (mg/l)"}, inplace = True)
         dataframe.to_csv(os.path.join(current_app.root_path, 'static/predicted_files', file_form.file_name.data) + '.csv', sep=';', encoding='utf-8')
 
-        prediction = Prediction(prediction_file=file_form.file_name.data + '.csv', user_id=current_user.id, aimodel_id=aimodel.id)
+        prediction = Prediction(prediction_file=file_form.file_name.data + '.csv', total_samples=total_samples, positive_samples=positive_samples, user_id=current_user.id, aimodel_id=aimodel.id)
         db.session.add(prediction)
         db.session.commit()
 
         flash('¡Predicciones generadas con éxito!', 'success')
-        return redirect(url_for('main.home'))
+        return redirect(url_for('predictions.prediction_list'))
     return render_template('use_aimodel.html', title='Use Model', form=file_form, aimodel=aimodel)

@@ -59,6 +59,8 @@ class Prediction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_predicted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     prediction_file = db.Column(db.String(50), nullable=False, default='predictions.csv')
+    total_samples = db.Column(db.Integer, nullable=False)
+    positive_samples = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     aimodel_id = db.Column(db.Integer, db.ForeignKey('aimodel.id'), nullable=False)
 

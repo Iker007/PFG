@@ -1,43 +1,46 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="content-section">
-    <div class="media">
-        <div class="media-body">
-            <h2 class="account-heading">{{ aimodel.name }}</h2>
-        </div>
-    </div>
-    <form method="post" action="" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <legend class="border-botton mb-4">
-                Utilizar modelo
-            </legend>
-            <div class="form-group">
-                {{ form.file_name.label(class="form-control-label") }}
-                {% if form.file_name.errors %}
-                {{ form.file_name(class="form-control is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.file_name.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.file_name(class="form-control") }}
-                {% endif %}
+<div id="loading"></div>
+<div id="content">
+    <div class="content-section">
+        <div class="media">
+            <div class="media-body">
+                <h2 class="account-heading">{{ aimodel.name }}</h2>
             </div>
-            <div class="form-group">
-                {{ form.csv_file.label() }}
-                {{ form.csv_file(class="form-control-file") }}
-                {% if form.csv_file.errors %}
+        </div>
+        <form id="model_validation" method="post" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-botton mb-4">
+                    Utilizar modelo
+                </legend>
+                <div class="form-group">
+                    {{ form.file_name.label(class="form-control-label") }}
+                    {% if form.file_name.errors %}
+                    {{ form.file_name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.file_name.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    {{ form.file_name(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.csv_file.label() }}
+                    {{ form.csv_file(class="form-control-file") }}
+                    {% if form.csv_file.errors %}
                     {% for error in form.csv_file.errors %}
                     <span class="text-danger">{{ error }}</span></br>
                     {% endfor %}
-                {% endif %}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info", value="Submit", onclick="loading();") }}
             </div>
-        </fieldset>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 {% endblock content %}
